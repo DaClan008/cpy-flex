@@ -1,0 +1,7 @@
+{
+    "$schema": "https://raw.githubusercontent.com/DaClan008/cpy-flex/master/opts.Schema.json"
+    "rename": {
+        "name": "name",
+        "removeExt": true
+    }
+}
