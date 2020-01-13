@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://github.com/DaClan008/cpy-flex/opts.Schema.json",
+    "$id": "https://raw.githubusercontent.com/DaClan008/cpy-flex/master/opts.Schema.json",
     "title": "cpyFlex_Opts",
     "type": "object",
     "properties": {
@@ -42,10 +42,51 @@
         "rename": {
             "oneOf": [
                 {
-                    "type": "string"
+                    "required": [
+                        "name"
+                    ],
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the file."
+                    },
+                    "removeExt": {
+                        "type": "boolean",
+                        "description": "If true the name and extension will be replaced with the name property."
+                    }
                 },
                 {
-                    "$ref": "#/definitions/PrePost"
+                    "anyOf": [
+                        {
+                            "preFix": {
+                                "type": "string",
+                                "description": "An optional value to add to the start of the file name."
+                            }
+                        },
+                        {
+                            "postfix": {
+                                "type": "string",
+                                "description": "An optional value to add to the end of the file name."
+                            }
+                        },
+                        {
+                            "ext": {
+                                "type": "string",
+                                "description": "A new extension to add to the file name."
+                            }
+                        },
+                        {
+                            "extPre": {
+                                "type": "string",
+                                "description": "A value to prefix the extension name with."
+                            }
+                        },
+                        {
+                            "extPost": {
+                                "type": "string",
+                                "description": "A value to add to the end of the extension."
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -53,46 +94,6 @@
             "type": "boolean",
             "description": "If true the file will not overwrite an existing file when being copied.",
             "default": false
-        }
-    },
-    "definitions": {
-        "prePost": {
-            "anyOf": [
-                {
-                    "name": {
-                        "type": "string",
-                        "description": "The name of the file."
-                    }
-                },
-                {
-                    "preFix": {
-                        "type": "string",
-                        "description": "An optional value to add to the start of the file name."
-                    }
-                },
-                {
-                    "postfix": {
-                        "type": "string",
-                        "description": "An optional value to add to the end of the file name."
-                    }
-                },
-                {
-                    "ext": {
-                        "type": "string",
-                        "description": "A new extension to add to the file name."
-                    }
-                },
-                {
-                    "extPre": {
-                        "type": "string",
-                        "description": "A value to prefix the extension name with."
-                    },
-                    "extPost": {
-                        "type": "string",
-                        "description": "A value to add to the end of the extension."
-                    }
-                }
-            ]
         }
     }
 }
