@@ -57,15 +57,6 @@
                 {
                     "anyOf": [
                         {
-<<<<<<< HEAD
-=======
-                            "name": {
-                                "type": "string",
-                                "description": "The name of the file."
-                            }
-                        },
-                        {
->>>>>>> 9ac25301be8d5df12791e4fbc3cfb09b9a057434
                             "preFix": {
                                 "type": "string",
                                 "description": "An optional value to add to the start of the file name."
