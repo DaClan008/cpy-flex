@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://github.com/DaClan008/cpy-flex/opts.Schema.json",
+    "$id": "https://raw.githubusercontent.com/DaClan008/cpy-flex/master/opts.Schema.json",
     "title": "cpyFlex_Opts",
     "type": "object",
     "properties": {
