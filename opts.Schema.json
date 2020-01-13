@@ -45,7 +45,44 @@
                     "type": "string"
                 },
                 {
-                    "$ref": "#/definitions/PrePost"
+                    "anyOf": [
+                        {
+                            "name": {
+                                "type": "string",
+                                "description": "The name of the file."
+                            }
+                        },
+                        {
+                            "preFix": {
+                                "type": "string",
+                                "description": "An optional value to add to the start of the file name."
+                            }
+                        },
+                        {
+                            "postfix": {
+                                "type": "string",
+                                "description": "An optional value to add to the end of the file name."
+                            }
+                        },
+                        {
+                            "ext": {
+                                "type": "string",
+                                "description": "A new extension to add to the file name."
+                            }
+                        },
+                        {
+                            "extPre": {
+                                "type": "string",
+                                "description": "A value to prefix the extension name with."
+                            }
+                        },
+                        {
+                            "extPost": {
+                                "type": "string",
+                                "description": "A value to add to the end of the extension."
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -53,46 +90,6 @@
             "type": "boolean",
             "description": "If true the file will not overwrite an existing file when being copied.",
             "default": false
-        }
-    },
-    "definitions": {
-        "prePost": {
-            "anyOf": [
-                {
-                    "name": {
-                        "type": "string",
-                        "description": "The name of the file."
-                    }
-                },
-                {
-                    "preFix": {
-                        "type": "string",
-                        "description": "An optional value to add to the start of the file name."
-                    }
-                },
-                {
-                    "postfix": {
-                        "type": "string",
-                        "description": "An optional value to add to the end of the file name."
-                    }
-                },
-                {
-                    "ext": {
-                        "type": "string",
-                        "description": "A new extension to add to the file name."
-                    }
-                },
-                {
-                    "extPre": {
-                        "type": "string",
-                        "description": "A value to prefix the extension name with."
-                    },
-                    "extPost": {
-                        "type": "string",
-                        "description": "A value to add to the end of the extension."
-                    }
-                }
-            ]
         }
     }
 }
