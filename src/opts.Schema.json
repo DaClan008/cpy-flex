@@ -40,53 +40,48 @@
             "description": "An optional directory path if the directory is different to the directory where command ran from."
         },
         "rename": {
+            "type": "object",
             "oneOf": [
                 {
+                    "type": "object",
                     "required": [
                         "name"
                     ],
-                    "name": {
-                        "type": "string",
-                        "description": "The name of the file."
-                    },
-                    "removeExt": {
-                        "type": "boolean",
-                        "description": "If true the name and extension will be replaced with the name property."
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "The name of the file."
+                        },
+                        "removeExt": {
+                            "type": "boolean",
+                            "description": "If true the name and extension will be replaced with the name property."
+                        }
                     }
                 },
                 {
-                    "anyOf": [
-                        {
-                            "preFix": {
-                                "type": "string",
-                                "description": "An optional value to add to the start of the file name."
-                            }
+                    "type": "object",
+                    "properties": {
+                        "preFix": {
+                            "type": "string",
+                            "description": "An optional value to add to the start of the file name."
                         },
-                        {
-                            "postfix": {
-                                "type": "string",
-                                "description": "An optional value to add to the end of the file name."
-                            }
+                        "postfix": {
+                            "type": "string",
+                            "description": "An optional value to add to the end of the file name."
                         },
-                        {
-                            "ext": {
-                                "type": "string",
-                                "description": "A new extension to add to the file name."
-                            }
+                        "ext": {
+                            "type": "string",
+                            "description": "A new extension to add to the file name."
                         },
-                        {
-                            "extPre": {
-                                "type": "string",
-                                "description": "A value to prefix the extension name with."
-                            }
+                        "extPre": {
+                            "type": "string",
+                            "description": "A value to prefix the extension name with."
                         },
-                        {
-                            "extPost": {
-                                "type": "string",
-                                "description": "A value to add to the end of the extension."
-                            }
+                        "extPost": {
+                            "type": "string",
+                            "description": "A value to add to the end of the extension."
                         }
-                    ]
+                    }
                 }
             ]
         },
