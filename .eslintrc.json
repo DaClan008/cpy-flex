@@ -1,0 +1,46 @@
+{
+	"extends": [
+		"airbnb-base",
+		"prettier/@typescript-eslint",
+		"plugin:node/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:import/typescript"
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 2020,
+		"sourceType": "module"
+	},
+	"plugins": ["@typescript-eslint", "prettier"],
+	"settings": {
+		"node": {
+			"resolvePaths": "./",
+			"tryExtensions": [".js", ".json", ".node", ".ts", ".tsx", ".jsx"]
+		},
+		"import/parser": {
+			"@typescript-eslint/parser": [".js", ".jsx", ".ts", ".tsx"]
+		},
+		"import/extensions": [".js", ".ts", ".tsx", ".jsx"]
+	},
+	"rules": {
+		"node/no-unsupported-features/es-syntax": "off",
+		"import/prefer-default-export": "off",
+		"import/extensions": "off",
+		"prettier/prettier": "warn",
+		"no-unused-vars": "warn",
+		"no-console": "off",
+		"func-names": "off",
+		"linebreak-style": "off",
+		"no-process-exit": "off",
+		"object-shorthand": "off",
+		"class-methods-use-this": "off",
+		"indent": "off",
+		"no-tabs": "off",
+		"no-plusplus": "off",
+		"no-fallthrough": "off",
+		"arrow-parens": "off"
+	}
+}
