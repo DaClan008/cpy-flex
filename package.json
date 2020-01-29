@@ -13,7 +13,8 @@
         "postbuild": "node tools/finalizeBuild && npx prettier bin/**/*.* --write && eslint bin/**/*.js --fix",
         "prepack": "npm run build",
         "pack": "node tools/publish",
-        "postpack": "npm run clean && npm run git",
+        "postpack": "npm run clean && npm run git && npm run clean",
+        "pregit": "git add . && git commit -m 'auto git commit'",
         "git": "git push"
     },
     "engines": {
