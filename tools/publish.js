@@ -20,7 +20,7 @@ function runner() {
     if (version) {
         try {
             const stdout = execSync(`npm version ${version}`, options)
-            console.log(stdout);
+            console.log(stdout.toString());
         } catch (error) {
             err = true;
             console.log(error);
@@ -29,7 +29,7 @@ function runner() {
     if (!err) {
         try {
             const stdout = execSync('npm publish', options)
-            console.log(stdout);
+            console.log(stdout.toString());
         } catch (error) {
             console.log(error);
         }
