@@ -1,86 +1,86 @@
 {
-  "name": "cpy-flex",
-  "version": "0.0.2",
-  "description": "A flexible copy module",
-  "main": "index.js",
-  "scripts": {
-    "test": "npm run lint && jest",
-    "test:w": "jest --watch",
-    "lint": "eslint src/* --fix",
-    "clean": "rimraf ./bin",
-    "prebuild": "npm run clean && npm test",
-    "build": "tsc --removeComments --inlineSourceMap false && tsc ./src/index.ts --declaration --emitDeclarationOnly --outFile ./bin/index.d.ts",
-    "postbuild": "node tools/finalizeBuild && npx prettier bin/**/*.* --write && eslint bin/**/*.js --fix",
-    "prepack": "npm run build",
-    "pack": "node tools/publish",
-    "postpack": "npm run clean && npm run git",
-    "git": "git push"
-  },
-  "engines": {
-    "node": ">=10.10.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/DaClan008/cpy-flex.git"
-  },
-  "keywords": [],
-  "author": "Jan Lehmkuhl <DaClan008@users.noreply.github.com>",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/DaClan008/cpy-flex/issues"
-  },
-  "homepage": "https://github.com/DaClan008/cpy-flex#readme",
-  "devDependencies": {
-    "@types/jest": "^24.0.25",
-    "@types/node": "^13.1.6",
-    "@typescript-eslint/eslint-plugin": "^2.16.0",
-    "@typescript-eslint/parser": "^2.16.0",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-node": "^4.0.0",
-    "eslint-config-prettier": "^6.9.0",
-    "eslint-plugin-import": "^2.20.0",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "jest": "^24.9.0",
-    "prettier": "^1.19.1",
-    "rimraf": "^3.0.0",
-    "ts-jest": "^24.3.0",
-    "ts-node": "^8.6.1",
-    "typescript": "^3.7.4"
-  },
-  "dependencies": {},
-  "jest": {
-    "coverageDirectory": "./coverage/",
-    "collectCoverage": true,
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+    "name": "cpy-flex",
+    "version": "0.0.2",
+    "description": "A flexible copy module",
+    "main": "index.js",
+    "scripts": {
+        "test": "npm run lint && jest",
+        "test:w": "jest --watch",
+        "lint": "eslint src/* --fix",
+        "clean": "rimraf ./bin",
+        "prebuild": "npm run clean && npm test",
+        "build": "tsc --removeComments --inlineSourceMap false && tsc ./src/index.ts --declaration --emitDeclarationOnly --outFile ./bin/index.d.ts",
+        "postbuild": "node tools/finalizeBuild && npx prettier bin/**/*.* --write && eslint bin/**/*.js --fix",
+        "prepack": "npm run build",
+        "pack": "node tools/publish",
+        "postpack": "npm run clean && npm run git",
+        "git": "git push"
     },
-    "coveragePathIgnorePatterns": [
-      "./node_modules",
-      "./coverage",
-      "./.vscode",
-      "./__test__"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "branches": 80,
-        "functions": 80,
-        "lines": 80,
-        "statements": -10
-      }
+    "engines": {
+        "node": ">=10.10.0"
     },
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "clover"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx"
-    ]
-  }
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/DaClan008/cpy-flex.git"
+    },
+    "keywords": [],
+    "author": "Jan Lehmkuhl <DaClan008@users.noreply.github.com>",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/DaClan008/cpy-flex/issues"
+    },
+    "homepage": "https://github.com/DaClan008/cpy-flex#readme",
+    "devDependencies": {
+        "@types/jest": "^24.0.25",
+        "@types/node": "^13.1.6",
+        "@typescript-eslint/eslint-plugin": "^2.16.0",
+        "@typescript-eslint/parser": "^2.16.0",
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "^14.0.0",
+        "eslint-config-node": "^4.0.0",
+        "eslint-config-prettier": "^6.9.0",
+        "eslint-plugin-import": "^2.20.0",
+        "eslint-plugin-node": "^11.0.0",
+        "eslint-plugin-prettier": "^3.1.2",
+        "jest": "^24.9.0",
+        "prettier": "^1.19.1",
+        "rimraf": "^3.0.0",
+        "ts-jest": "^24.3.0",
+        "ts-node": "^8.6.1",
+        "typescript": "^3.7.4"
+    },
+    "dependencies": {},
+    "jest": {
+        "coverageDirectory": "./coverage/",
+        "collectCoverage": true,
+        "transform": {
+            "^.+\\.tsx?$": "ts-jest"
+        },
+        "coveragePathIgnorePatterns": [
+            "./node_modules",
+            "./coverage",
+            "./.vscode",
+            "./__test__"
+        ],
+        "coverageThreshold": {
+            "global": {
+                "branches": 80,
+                "functions": 80,
+                "lines": 80,
+                "statements": -10
+            }
+        },
+        "coverageReporters": [
+            "json",
+            "lcov",
+            "text",
+            "clover"
+        ],
+        "moduleFileExtensions": [
+            "ts",
+            "tsx",
+            "js",
+            "jsx"
+        ]
+    }
 }

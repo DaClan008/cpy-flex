@@ -42,6 +42,6 @@ if (pack && pack.version) {
     // eslint-disable-next-line global-require
     const currentPack = require('../package.json');
     currentPack.version = pack.version;
-    writeFileSync("./", currentPack);
+    writeFileSync(join(process.cwd(), 'package.json'), JSON.parse(currentPack, null, 4));
 }
 
