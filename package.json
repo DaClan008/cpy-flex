@@ -1,6 +1,6 @@
 {
   "name": "cpy-flex",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A flexible copy module",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,11 @@
     "clean": "rimraf ./bin",
     "prebuild": "npm run clean && npm test",
     "build": "tsc --removeComments --inlineSourceMap false && tsc ./src/index.ts --declaration --emitDeclarationOnly --outFile ./bin/index.d.ts",
-    "postbuild": "node tools/finalizeBuild && npx prettier bin/**/*.* --write && eslint bin/**/*.js --fix"
+    "postbuild": "node tools/finalizeBuild && npx prettier bin/**/*.* --write && eslint bin/**/*.js --fix",
+    "prepack": "npm run build",
+    "pack": "node tools/publish",
+    "postpack": "npm run clean && npm run git",
+    "git": "git push"
   },
   "engines": {
     "node": ">=10.10.0"
