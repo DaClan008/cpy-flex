@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const { execSync } = require('child_process');
 const { writeFileSync } = require("fs");
 const { join } = require('path');
@@ -14,7 +15,7 @@ if (args.indexOf('--prerelease') || args.indexOf('prerelease')) version = 'prere
 
 console.info("starting publish")
 const options = { cwd: join(process.cwd(), '/bin') }
-async function runner() {
+function runner() {
     let err = false;
     if (version) {
         try {
@@ -36,12 +37,14 @@ async function runner() {
     console.log("publishing completed");
 }
 
+runner();
 const pack = require('../bin/package.json');
 
 if (pack && pack.version) {
     // eslint-disable-next-line global-require
     const currentPack = require('../package.json');
     currentPack.version = pack.version;
-    writeFileSync(join(process.cwd(), 'package.json'), JSON.parse(currentPack, null, 4));
+    console.log(pack.version);
+    writeFileSync(join(process.cwd(), 'package.json'), JSON.stringify(currentPack, null, 4));
 }
 
