@@ -5,6 +5,7 @@ const { sep, resolve } = require('path');
 const cwd = process.cwd();
 const cwdSanitized = cwd.replace(/(\\|\/)/g, `\\${sep}`);
 const sanSep = `\\${sep}`;
+console.log(cwd);
 const [drive] = /^[a-zA-Z]+:/.exec(cwd);
 const anyEnd = `(${sanSep}.+)?$`;
 
