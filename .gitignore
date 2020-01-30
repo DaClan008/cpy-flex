@@ -1,11 +1,10 @@
 node_modules
 # Coverage directory used by tools like istanbul
-coverage
+coverage/*
 # TypeScript v1 declaration files
-typings/
-bin/
+./typings
+bin
 index.js
 ./lib
 .vscode
-__test__/bin
 .git
