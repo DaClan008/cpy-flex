@@ -8,6 +8,8 @@ const sanSep = `\\${sep}`;
 const [drive] = /^[a-zA-Z]:/.exec(cwd);
 const anyEnd = `(${sanSep}.+)?$`;
 
+console.log(cwd);
+
 function sanitizer(value: string): string {
 	if (value) return value.replace(/(\\|\/)/g, `\\${sep}`);
 	return value;
