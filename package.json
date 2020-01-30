@@ -1,11 +1,12 @@
 {
     "name": "cpy-flex",
-    "version": "0.0.3-1",
+    "version": "0.0.3-0",
     "description": "A flexible copy module",
     "main": "index.js",
     "scripts": {
         "test": "npm run lint && jest",
-        "test:w": "jest --watch",
+        "test:w": "jest --watchAll",
+        "coverage": "jest --coverageReporters=text-lcov | coveralls",
         "lint": "eslint src/* --fix",
         "clean": "rimraf ./bin",
         "prebuild": "npm run clean && npm test",
@@ -15,7 +16,8 @@
         "pack": "node tools/publish",
         "postpack": "npm run clean && npm run git && npm run clean",
         "pregit": "git add . && git commit -m 'auto git commit'",
-        "git": "git push"
+        "git": "git push",
+        "pub": "node ./tools/publish"
     },
     "engines": {
         "node": ">=10.10.0"
@@ -36,6 +38,8 @@
         "@types/node": "^13.1.6",
         "@typescript-eslint/eslint-plugin": "^2.16.0",
         "@typescript-eslint/parser": "^2.16.0",
+        "codecov": "^3.6.2",
+        "coveralls": "^3.0.9",
         "eslint": "^6.8.0",
         "eslint-config-airbnb-base": "^14.0.0",
         "eslint-config-node": "^4.0.0",

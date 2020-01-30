@@ -4,22 +4,60 @@ const { writeFileSync } = require("fs");
 const { join } = require('path');
 
 const args = process.argv.slice(2);
-let version = '';
-if (args.indexOf('-p') || args.indexOf('--patch') || args.indexOf('patch')) version = 'patch';
-if (args.indexOf('-m') || args.indexOf('--minor') || args.indexOf('minor')) version = 'minor';
-if (args.indexOf('-M') || args.indexOf('--major') || args.indexOf('major')) version = 'patch';
-if (args.indexOf('--premajor') || args.indexOf('premajor')) version = 'premajor';
-if (args.indexOf('--preminor') || args.indexOf('preminor')) version = 'preminor';
-if (args.indexOf('--prepatch') || args.indexOf('prepatch')) version = 'prepatch';
-if (args.indexOf('--prerelease') || args.indexOf('prerelease')) version = 'prerelease';
+let ignoreGit = false;
+let ignorePack = false;
+let v;
+if (args.length > 0) {
+    for (let i = 0, len = args.length; i < len; i++) {
+        const val = args[i].replace(/^--/, '').toLowerCase();
+        switch (val) {
+            case 'p':
+                v = 'patch';
+                break;
+            case 'm':
+                v = 'minor';
+                break;
+            case 'M':
+                v = 'major';
+                break;
+            case 'patch':
+            case 'major':
+            case 'minor':
+            case 'premajor':
+            case 'preminor':
+            case 'prepatch':
+            case 'from-git':
+            case 'prerelease':
+                v = val;
+                break;
+            case 'preid':
+                if (len > i + 1) {
+                    const next = args[i + 1];
+                    if (v !== '') v += ' '
+                    v += `--preid=${next}`;
+                    i++;
+                }
+                break;
+            case 'ignorepack':
+                ignorePack = true;
+                break;
+            case 'ignoregit':
+                ignoreGit = true;
+            default:
+                if (/^\d+\.\d+\.\d+/.test(val)) v = val;
+                else if (/(--)?preid=.+/.test(val)) v += `${v !== '' ? ' ' : ''}--${val}`;
+                break;
+        }
+    }
+}
 
 console.info("starting publish")
 const options = { cwd: join(process.cwd(), '/bin') }
 function runner() {
     let err = false;
-    if (version) {
+    if (v) {
         try {
-            const stdout = execSync(`npm version ${version}`, options)
+            const stdout = execSync(`npm version ${v}`, options)
             console.log(stdout.toString());
         } catch (error) {
             err = true;
@@ -40,11 +78,20 @@ function runner() {
 runner();
 const pack = require('../bin/package.json');
 
-if (pack && pack.version) {
+const { version } = pack;
+
+if (version) {
     // eslint-disable-next-line global-require
     const currentPack = require('../package.json');
-    currentPack.version = pack.version;
-    console.log(pack.version);
+    currentPack.version = version;
     writeFileSync(join(process.cwd(), 'package.json'), JSON.stringify(currentPack, null, 4));
+    console.log('package.json version updated:', pack.version);
+    try {
+        execSync(`git tag -a v${version} -m "updated version ${version}"`);
+        console.log(`git package version updated: ${version}`)
+    } catch (error) {
+        console.log("error occured:\n", error);
+    }
+
 }
 
