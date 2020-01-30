@@ -30,9 +30,9 @@ cpyFlex(cfomrArr, toFolder, options).then(copied => console.log(copied));
 
 | Param  | Input Type                | Description                                                     |
 | ------ | ------------------------- | --------------------------------------------------------------- |
-| from   | string \| Array\<string\> | Can be any allowable pattern. See also [patterns](./#Patterns). |
+| from   | string \| Array\<string\> | Can be any allowable pattern. See also [patterns](./#patterns). |
 | to     | string                    | Can be a normal glob pattern string.                            |
-| option | options                   | A options object also see [Options](./#Options)                 |
+| option | options                   | A options object also see [Options](./#options)                 |
 
 ## Options
 
@@ -42,11 +42,11 @@ The following options can be used. The groups are merely for ease of reading.
 
 | Property       | PropertyType                                | Description                                                                                                                                                                                                                                                                         |
 | -------------- | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| preserve       | [enum\<PreserveState\>](./#PreserveState)   | Indicate what the output structure should look like.                                                                                                                                                                                                                                |
-| rename         | [RenameOptions](./#RenameOptions)           | An object to use if the file names and or extension should be changed.                                                                                                                                                                                                              |
+| preserve       | [enum\<PreserveState\>](./#preservestate)   | Indicate what the output structure should look like.                                                                                                                                                                                                                                |
+| rename         | [RenameOptions](./#renameoptions)           | An object to use if the file names and or extension should be changed.                                                                                                                                                                                                              |
 | maxRenameCount | number                                      | Is used when the file being copied already esists and existingFiles is set to 'rename'. This sets the maximum number to use in the rename.                                                                                                                                          |
 | ignoreMax      | boolean                                     | If set to true, the maxRenameCount is theoretically set to infinite. _Default=false_                                                                                                                                                                                                |
-| existingFiles  | [enum\<OverwrightEnum\>](./#OverWrightEnum) | Is used when the file being copied already exist in the output directory. _Default=overwright_                                                                                                                                                                                      |
+| existingFiles  | [enum\<OverwrightEnum\>](./#overwrightenum) | Is used when the file being copied already exist in the output directory. _Default=overwright_                                                                                                                                                                                      |
 | longExtension  | boolean                                     | If true indicates to the system that file names will not have . values, and if a filename has multiple . values, all of them is considered to be the extension name (extension for file.some.js will be .some.js). Else if set to false the extension for file.some.js will be .js. |
 | root           | string                                      | The root directory to work from. If set and all relative from values will resolve to this directory. _Default=Current Working Directory_                                                                                                                                            |
 
