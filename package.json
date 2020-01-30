@@ -7,7 +7,7 @@
         "test": "npm run lint && jest",
         "test:w": "jest --watchAll",
         "coverage": "jest --coverageReporters=text-lcov | coveralls",
-        "lint": "eslint src/* --fix",
+        "lint": "eslint src/**/*.ts --fix",
         "clean": "rimraf ./bin",
         "prebuild": "npm run clean && npm test",
         "build": "tsc --removeComments --inlineSourceMap false && tsc ./src/index.ts --declaration --emitDeclarationOnly --outFile ./bin/index.d.ts",
