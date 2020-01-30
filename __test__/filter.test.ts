@@ -2,10 +2,10 @@ import { filterBuilder, getFilters } from '../src/lib/filter';
 import { FolderObject } from '../src/lib/objects';
 const { sep, resolve } = require('path');
 
-const cwd = resolve('.');
+const cwd = process.cwd();
 const cwdSanitized = cwd.replace(/(\\|\/)/g, `\\${sep}`);
 const sanSep = `\\${sep}`;
-const [drive] = /^[a-zA-Z]:/.exec(cwd);
+const [drive] = /^[a-zA-Z]+:/.exec(cwd);
 const anyEnd = `(${sanSep}.+)?$`;
 
 function sanitizer(value: string): string {
