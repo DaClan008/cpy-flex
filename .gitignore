@@ -5,7 +5,7 @@ coverage
 typings/
 bin/
 index.js
-lib
+./lib
 .vscode
 __test__/bin
 .git
