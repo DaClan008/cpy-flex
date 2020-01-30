@@ -3,12 +3,12 @@ import { FolderObject } from '../src/lib/objects';
 const { sep } = require('path');
 
 const cwd = process.cwd();
+console.log(cwd);
 const cwdSanitized = cwd.replace(/(\\|\/)/g, `\\${sep}`);
 const sanSep = `\\${sep}`;
 const [drive] = /^[a-zA-Z]:/.exec(cwd);
 const anyEnd = `(${sanSep}.+)?$`;
 
-console.log(cwd);
 
 function sanitizer(value: string): string {
 	if (value) return value.replace(/(\\|\/)/g, `\\${sep}`);
