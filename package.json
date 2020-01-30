@@ -6,7 +6,6 @@
     "scripts": {
         "test": "npm run lint && jest",
         "test:w": "jest --watchAll",
-        "coverage": "jest --coverageReporters=text-lcov | coveralls",
         "lint": "eslint src/**/*.ts --fix",
         "clean": "rimraf ./bin",
         "prebuild": "npm run clean && npm test",
@@ -65,7 +64,8 @@
             "./node_modules",
             "./coverage",
             "./.vscode",
-            "./__test__"
+            "./__test__",
+            "./tools"
         ],
         "coverageThreshold": {
             "global": {
