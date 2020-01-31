@@ -7,6 +7,7 @@
 ![download](https://img.shields.io/npm/dw/cpy-flex)
 ![NPM](https://img.shields.io/npm/l/cpy-flex)
 ![npm bundle size](https://img.shields.io/bundlephobia/min/cpy-flex?label=size)
+
 A flexible copy module that extend the normal glob pattern to include regex searches.
 
 ## Install
