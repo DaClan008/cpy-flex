@@ -12,7 +12,7 @@ A flexible copy module that extend the normal glob pattern to include regex sear
 ## Install
 
 ```console
-npm install ncpy-flex
+npm install cpy-flex
 ```
 
 ## Usage
@@ -256,6 +256,11 @@ The use of wildcard \* character should be the same with current glob patterns w
 Contributions are welcome. I hope you enjoy, and feel free to contact me for any advice, enhancement.
 
 ## Change Log
+
+**0.0.4**
+
+-   Fixed spelling error
+-   Just for testing (nothing in the code has changed much).
 
 **0.0.3**
 
