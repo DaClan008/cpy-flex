@@ -14,8 +14,9 @@
         "prepack": "npm run build",
         "pack": "node tools/publish",
         "postpack": "npm run clean && npm run git && npm run clean",
-        "pregit": "git add . && git commit -m 'auto git commit'",
-        "git": "git push",
+        "pregit": "git add -A",
+        "git": "git commit -m \"auto git commit\"",
+        "postgit": "&& git push",
         "pub": "node ./tools/publish"
     },
     "engines": {
