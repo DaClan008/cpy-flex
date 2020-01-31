@@ -16,7 +16,7 @@
         "postpack": "npm run clean && npm run git && npm run clean",
         "pregit": "git add -A",
         "git": "git commit -m \"auto git commit\"",
-        "postgit": "&& git push",
+        "postgit": "git push",
         "pub": "node ./tools/publish"
     },
     "engines": {
