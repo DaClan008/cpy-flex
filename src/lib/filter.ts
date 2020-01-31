@@ -37,13 +37,17 @@ enum codeStates {
  */
 function setCwd(newRoot = '.'): void {
 	const wrkRoot = newRoot.charAt(0) === '!' ? newRoot.slice(1) : newRoot;
-	if (isAbsolute(wrkRoot)) {
-		if (wrkRoot[0] !== '/' && wrkRoot[0] !== '\\') dir = wrkRoot.replace(/(\\|\/)+/g, sep);
-		else dir = resolve(wrkRoot);
-	} else dir = resolve(wrkRoot);
+	if (isAbsolute(wrkRoot) && wrkRoot[0] !== '/' && wrkRoot[0] !== '\\') {
+		dir = wrkRoot.replace(/(\\|\/)+/g, sep);
+		const tst = /(.*:)(\\|\/)/.exec(wrkRoot);
+		if (tst) [, dirRoot] = tst;
+	} else {
+		dir = resolve(wrkRoot);
+		dirRoot = parse(dir).root;
+	}
 	// add seperator at end for consistency
 	if (dir.charAt(dir.length - 1) !== sep) dir += sep;
-	dirRoot = parse(dir).root;
+	if (dirRoot.charAt(dirRoot.length - 1) !== sep) dirRoot += sep;
 	dirSet = true;
 }
 
@@ -834,4 +838,4 @@ export function getFilters(folders: string | string[], options: FilterOptions = 
 	return foldersList;
 }
 
-console.log(filterBuilder('/some foloder*', { root: 'D:' }));
+console.log(filterBuilder('', { root: 'D:/cwd' }));

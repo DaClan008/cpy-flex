@@ -1,7 +1,7 @@
 import { isAbsolute, delimiter, parse, resolve, join, sep } from 'path';
 
 console.log(delimiter);
-console.log(isAbsolute('.'));
+console.log(isAbsolute('D:/abc'));
 console.log(parse(resolve('.')));
 
 console.log(join('C:/', 'a/b/../c/d/../'));
