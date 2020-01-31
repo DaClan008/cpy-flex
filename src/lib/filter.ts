@@ -1,4 +1,4 @@
-import { resolve, sep, parse, isAbsolute } from 'path';
+import { resolve, sep, parse, isAbsolute, posix } from 'path';
 import { FolderObject, ListObject, FilterOptions } from './objects';
 
 let dir = '';
@@ -698,11 +698,10 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	 */
 	function init(): FolderObject {
 		// confirm start
-		let [char] = file;
+		const [char] = file;
 		if (char === '!') {
 			file = file.slice(1);
 			folderObj.isNegative = true;
-			[char] = file;
 		}
 		fileLen = file.length;
 		deconstructFile();
@@ -838,4 +837,8 @@ export function getFilters(folders: string | string[], options: FilterOptions = 
 	return foldersList;
 }
 
-console.log(filterBuilder('', { root: 'D:/cwd' }));
+const val = 'D:/';
+console.log('absolute', isAbsolute(val));
+console.log('after absolute', val);
+console.log('parse', parse(val));
+console.log('resolve', resolve(val));

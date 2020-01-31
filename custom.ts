@@ -1,5 +1,6 @@
-import { isAbsolute, delimiter, parse, resolve, join, sep } from 'path';
+import { isAbsolute, delimiter, parse, resolve, join, sep, posix } from 'path';
 
+console.log(posix);
 console.log(delimiter);
 console.log(isAbsolute('D:/abc'));
 console.log(parse(resolve('.')));
