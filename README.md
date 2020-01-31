@@ -1,5 +1,12 @@
 # CPY-FLEX
 
+![travis](https://travis-ci.com/DaClan008/cpy-flex.svg?branch=master)
+[![codecov](https://codecov.io/gh/DaClan008/cpy-flex/branch/master/graph/badge.svg)](https://codecov.io/gh/DaClan008/cpy-flex)
+[![Coverage Status](https://coveralls.io/repos/github/DaClan008/cpy-flex/badge.svg?branch=master)](https://coveralls.io/github/DaClan008/cpy-flex?branch=master)
+![npm](https://img.shields.io/npm/v/cpy-flex)
+![download](https://img.shields.io/npm/dw/cpy-flex)
+![NPM](https://img.shields.io/npm/l/cpy-flex)
+
 A flexible copy module that extend the normal glob pattern to include regex searches.
 
 ## Install

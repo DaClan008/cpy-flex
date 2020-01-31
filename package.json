@@ -25,7 +25,11 @@
         "type": "git",
         "url": "git+https://github.com/DaClan008/cpy-flex.git"
     },
-    "keywords": [],
+    "keywords": [
+        "copy",
+        "folder",
+        "regex"
+    ],
     "author": "Jan Lehmkuhl <DaClan008@users.noreply.github.com>",
     "license": "Apache-2.0",
     "bugs": {
