@@ -58,22 +58,28 @@ describe('testing Synchronous copy function', () => {
 	});
 
 	test('should handle if bin is set to a non-accessible location', () => {
-		// expect.assertions(2);
-		const from = './src/lib';
-		let myBin = 'D:/';
-		const options: Options = {
-			root: '__test__/mock',
-			existingFiles: OverWrightEnum.rename,
-			errorHandle: ErrorOptions.throwError,
-		};
-		expect.assertions(2);
-		try {
-			const answers = cpyFlexSync(from, myBin, options);
-			expect(answers).toBe(0);
-		} catch (error) {
-			expect(error).toBeTruthy();
-			expect(error).toBeTruthy();
-		}
+		// can only run and test in windows systems
+		if (process.env.OS === 'Windows_NT') {
+			// expect.assertions(2);
+			const from = './src/lib';
+			let myBin = 'D:/';
+			const options: Options = {
+				root: '__test__/mock',
+				existingFiles: OverWrightEnum.rename,
+				errorHandle: ErrorOptions.throwError,
+			};
+			expect.assertions(2);
+			let codeAfter = false;
+			let err = false;
+			try {
+				const answers = cpyFlexSync(from, myBin, options);
+				codeAfter = true;
+			} catch (error) {
+				err = true;
+			}
+			expect(codeAfter).toBe(false);
+			expect(err).toBe(true);
+		} else expect(true).toBe(true);
 	});
 
 	test('should extend rename function -> pre/post', () => {
@@ -312,42 +318,48 @@ describe('testing Async copy function', () => {
 		expect(answers).toBe(0);
 	});
 	test('set bin to a non-accessible location', async () => {
-		// expect.assertions(2);
-		const from = './src/lib';
-		let myBin = 'D:/';
-		const options: Options = {
-			root: '__test__/mock',
-			existingFiles: OverWrightEnum.rename,
-			errorHandle: ErrorOptions.throwError,
-		};
-		expect.assertions(2);
-		try {
-			const answers = await cpyFlex(from, myBin, options);
-			expect(answers).toBe(0);
-		} catch (error) {
-			expect(error).toBeTruthy();
-			expect(error).toBeTruthy();
-		}
+		// can only run in windows systems
+		if (process.env.OS === 'Windows_NT') {
+			// expect.assertions(2);
+			const from = './src/lib';
+			let myBin = 'D:/';
+			const options: Options = {
+				root: '__test__/mock',
+				existingFiles: OverWrightEnum.rename,
+				errorHandle: ErrorOptions.throwError,
+			};
+			expect.assertions(2);
+			try {
+				const answers = await cpyFlex(from, myBin, options);
+				expect(answers).toBe(0);
+			} catch (error) {
+				expect(error).toBeTruthy();
+				expect(error).toBeTruthy();
+			}
+		} else expect(true).toBe(true);
 	});
 
 	test('set bin to a non-accessible location2', async () => {
-		// expect.assertions(2);
-		const from = './src/lib';
-		let myBin = 'D:/';
-		const options: Options = {
-			root: '__test__/mock',
-			existingFiles: OverWrightEnum.rename,
-			errorHandle: ErrorOptions.log,
-		};
-		expect.assertions(1);
-		console.warn = jest.fn();
-		try {
-			const answers = await cpyFlex(from, myBin, options);
-			expect(console.warn).toBeCalledTimes(2);
-		} catch (error) {
-			expect(error).toBeTruthy();
-			expect(error).toBeTruthy();
-		}
+		// can only run in windows systems
+		if (process.env.OS === 'Windows_NT') {
+			// expect.assertions(2);
+			const from = './src/lib';
+			let myBin = 'D:/';
+			const options: Options = {
+				root: '__test__/mock',
+				existingFiles: OverWrightEnum.rename,
+				errorHandle: ErrorOptions.log,
+			};
+			expect.assertions(1);
+			console.warn = jest.fn();
+			try {
+				const answers = await cpyFlex(from, myBin, options);
+				expect(console.warn).toBeCalledTimes(2);
+			} catch (error) {
+				expect(error).toBeTruthy();
+				expect(error).toBeTruthy();
+			}
+		} else expect(true).toBe(true);
 	});
 
 	test('should rename longExtension', async () => {

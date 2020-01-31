@@ -48,7 +48,9 @@ describe('Initializing sync method', () => {
 		});
 	});
 	test('negative absolute path (ignore !) -> !/', () => {
-		const result = getFoldersSync(`!${mock.slice(2)}`);
+		// see if we can do it without drive number (if available).
+		const current = mock[0] !== sep ? mock.slice(2) : mock;
+		const result = getFoldersSync(`!${current}`);
 		expect(result.length).toBe(9);
 		expect(result[0]).toMatchObject({
 			name: 'src',
