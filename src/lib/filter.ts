@@ -36,8 +36,12 @@ enum codeStates {
  * @returns {voiid}
  */
 function setCwd(newRoot = '.'): void {
-	if (newRoot.charAt(0) === '!') dir = resolve(newRoot.slice(1)) + sep;
-	else dir = resolve(newRoot);
+	const wrkRoot = newRoot.charAt(0) === '!' ? newRoot.slice(1) : newRoot;
+	if (isAbsolute(wrkRoot)) {
+		if (wrkRoot[0] !== '/' && wrkRoot[0] !== '\\') dir = wrkRoot.replace(/(\\|\/)+/g, sep);
+		else dir = resolve(wrkRoot);
+	} else dir = resolve(wrkRoot);
+	// add seperator at end for consistency
 	if (dir.charAt(dir.length - 1) !== sep) dir += sep;
 	dirRoot = parse(dir).root;
 	dirSet = true;
