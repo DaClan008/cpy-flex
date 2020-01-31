@@ -1,4 +1,4 @@
-import { resolve, sep, parse, isAbsolute, posix } from 'path';
+import { resolve, sep, parse, isAbsolute } from 'path';
 import { FolderObject, ListObject, FilterOptions } from './objects';
 
 let dir = '';
@@ -37,7 +37,8 @@ enum codeStates {
  */
 function setCwd(newRoot = '.'): void {
 	const wrkRoot = newRoot.charAt(0) === '!' ? newRoot.slice(1) : newRoot;
-	if (isAbsolute(wrkRoot) && wrkRoot[0] !== '/' && wrkRoot[0] !== '\\') {
+	const absolute = /^(.:)?(\\|\/)/.test(wrkRoot);
+	if (absolute && wrkRoot[0] !== '/' && wrkRoot[0] !== '\\') {
 		dir = wrkRoot.replace(/(\\|\/)+/g, sep);
 		const tst = /(.*:)(\\|\/)/.exec(wrkRoot);
 		if (tst) [, dirRoot] = tst;
@@ -836,9 +837,3 @@ export function getFilters(folders: string | string[], options: FilterOptions = 
 	foldersList.start = foldersList.start.filter((val, idx, self) => self.indexOf(val) === idx);
 	return foldersList;
 }
-
-const val = 'D:/';
-console.log('absolute', isAbsolute(val));
-console.log('after absolute', val);
-console.log('parse', parse(val));
-console.log('resolve', resolve(val));
