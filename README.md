@@ -257,6 +257,8 @@ Contributions are welcome. I hope you enjoy, and feel free to contact me for any
 
 ## Change Log
 
-**0.0.4**
+**0.0.3**
 
--   Adding readme and keywords inside Package.json
+-   Fixed execution of code in linux based systems.
+-   Fixed tests to run on linux system.
+-   Adding readme and keywords inside Package.json.

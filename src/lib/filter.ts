@@ -699,7 +699,7 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	 */
 	function init(): FolderObject {
 		// confirm start
-		const [char] = file;
+		const char = file[0];
 		if (char === '!') {
 			file = file.slice(1);
 			folderObj.isNegative = true;
