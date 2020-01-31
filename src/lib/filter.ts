@@ -1,10 +1,10 @@
+import { resolve, sep, parse, isAbsolute } from 'path';
 import { FolderObject, ListObject, FilterOptions } from './objects';
-import { getFolders } from './folderBuilder';
 
-const [slash] = /(\\|\/)/.exec(__dirname);
 let dir = '';
 let dirRoot = '';
 let dirSet = false;
+const escSep = `\\${sep}`;
 
 /**
  * Indicate what pattern type the code is => () - curve; {} - curl; [] - square
@@ -35,28 +35,12 @@ enum codeStates {
  * @param {string} newRoot The current working directory to set.
  * @returns {voiid}
  */
-function setCwd(newRoot: string): void {
-	dir = newRoot;
-	// verify cwd
-	const tmpDir = process.cwd();
-	dirRoot = tmpDir.substr(0, 2);
-	const cwdPat = /^(!)?(\.)?([a-zA-Z]:)?(\\|\/)/.exec(dir);
-	// set correct dir
-	if (cwdPat) {
-		// good we have a pattern
-		const [, exclam, dot, drive] = cwdPat;
-		if (exclam) return setCwd(dir.slice(1));
-		if (drive) dirRoot = drive;
-		else if (dot) dir = tmpDir + slash + dir.slice(2);
-		// if cwdPat... then it can only be exclam, drive, dot OR ONLY slash at end
-		else dir = dirRoot + dir;
-	} else dir = tmpDir + slash + dir;
-	// fix slashes if any
-	dir = dir.replace(/(\\|\/)+$/, '');
-	if (dir) dir = dir.replace(/(\\|\/)/g, slash);
-
+function setCwd(newRoot = '.'): void {
+	if (newRoot.charAt(0) === '!') dir = resolve(newRoot.slice(1)) + sep;
+	else dir = resolve(newRoot);
+	if (dir.charAt(dir.length - 1) !== sep) dir += sep;
+	dirRoot = parse(dir).root;
 	dirSet = true;
-	return undefined;
 }
 
 /**
@@ -97,7 +81,7 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	const folderObj: FolderObject = {
 		file,
 		isNegative: false,
-		cwd: dir,
+		base: dir,
 		root: dirRoot,
 		isComplex: false,
 	};
@@ -315,15 +299,15 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 		if (dirty) {
 			const last = stars.pop();
 			if (stars.length > 0) {
-				if (stars.indexOf(2) === -1) tmpStr += `[^\\${slash}]*\\${slash}`;
-				else tmpStr += `.*\\${slash}`;
+				if (stars.indexOf(2) === -1) tmpStr += `[^${escSep}]*${escSep}`;
+				else tmpStr += `.*${escSep}`;
 				tmpNorm = '';
 				hasPattern = true;
 			}
 			// see if it is inside last section
 			if (last === 2) addChar('*', true);
 			else {
-				tmpStr += `[^\\${slash}]*`;
+				tmpStr += `[^${escSep}]*`;
 				if (last === 3) tmpStr += '\\*';
 				tmpNorm = '';
 				hasPattern = true;
@@ -342,7 +326,7 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 				const c = i === len ? '' : ext[i];
 				if (c === '*') strC++;
 				else {
-					if (strC === 1) tmpExt += `[^\\${slash}]*`;
+					if (strC === 1) tmpExt += `[^${escSep}]*`;
 					else if (strC === 2) tmpExt += '\\*';
 					else if (strC === 3) tmpExt += '\\**';
 					tmpExt += `${c === '.' ? '\\' : ''}${c}`;
@@ -372,11 +356,11 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 
 			if (single && end) folderObj.anyFile = true;
 		} else if (single) {
-			result = `[^\\${slash}]*`;
+			result = `[^${escSep}]*`;
 			if (end) folderObj.anyFile = true;
 		}
 		if (triple) {
-			if (result !== '') result += `\\${slash}`;
+			if (result !== '') result += `${escSep}`;
 			result += '\\**';
 		}
 
@@ -628,11 +612,15 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 						} else if (pattern.length > 0) {
 							pattern.pop();
 							if (pattern.length < folderStrArr.length) folderStrArr.pop();
-						} else if (folderObj.cwd) {
+						} else if (folderObj.base) {
 							// remove from cwd
-							const cwdArr = folderObj.cwd.split(slash);
+							const cwdArr = folderObj.base.split(sep);
+							// remove empty
+							if (cwdArr[cwdArr.length - 1] === '') cwdArr.pop();
 							// don't remove root
-							if (cwdArr.pop() !== folderObj.root) folderObj.cwd = cwdArr.join(slash);
+							if (cwdArr.pop() + sep !== folderObj.root) {
+								folderObj.base = cwdArr.join(sep) + sep;
+							}
 						}
 					} else for (let x = 0; x < cnt; x++) addChar('.', true);
 					break;
@@ -649,25 +637,27 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	// #region rebuild file
 	function reconstructFile(): void {
 		/* istanbul ignore next */
-		if (folderObj.root && !folderObj.cwd) folderObj.cwd = folderObj.root;
+		if (folderObj.root && !folderObj.base) folderObj.base = folderObj.root;
 		// work through pattern
-		const sanCwd = folderObj.cwd.replace(new RegExp(`\\${slash}`, 'g'), `\\${slash}`);
-		const sanSlash = `\\${slash}`;
+		const sanCwd = folderObj.base.replace(new RegExp(`${escSep}`, 'g'), `${escSep}`);
 		if (folderStrArr.length > 0) {
-			folderObj.startStr = `${folderObj.cwd}${slash}${folderStrArr.join(slash)}`;
-		} else folderObj.startStr = folderObj.cwd;
+			folderObj.startStr = `${folderObj.base}${folderStrArr.join(sep)}`;
+		} else folderObj.startStr = folderObj.base;
 		if (pattern.length > 0) {
-			folderObj.searchStr = `${sanCwd}${sanSlash}${pattern.join(sanSlash)}`;
+			folderObj.searchStr = `${sanCwd}${pattern.join(escSep)}`;
 		} else folderObj.searchStr = sanCwd;
 		if (!folderObj.anyFile && !folderObj.fileName) folderObj.anyFile = true;
 		if (!folderObj.anyExtension && !folderObj.ext) folderObj.anyExtension = true;
 		// sort out last entry
 		if (!hasPattern && (!folderObj.ext || folderObj.ext === '.')) {
-			folderObj.searchStr += `(${sanSlash}.+)?$`;
+			if (folderObj.searchStr[folderObj.searchStr.length - 1] === sep) {
+				folderObj.searchStr = folderObj.searchStr.replace(/(\\|\/)+$/, '');
+			}
+			folderObj.searchStr += `(${escSep}.+)?$`;
 		}
 
-		let strtFile = folderObj.file.replace(/(\/|\\)/g, slash);
-		strtFile = folderObj.cwd + slash + strtFile.replace(/^!?\.?(\/|\\)/, '');
+		let strtFile = folderObj.file.replace(/(\/|\\)/g, sep);
+		strtFile = folderObj.base + strtFile.replace(/^!?\.?(\/|\\)/, '');
 		if (strtFile === folderObj.startStr) folderObj.exact = true;
 		folderObj.reg = new RegExp(folderObj.searchStr);
 	}
@@ -679,23 +669,26 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	 */
 	function init(): FolderObject {
 		// confirm start
-		const pat = /^(!)?(\.)?([a-zA-Z]:)?(\\|\/)?/.exec(file);
-		if (pat) {
-			const [match, exclam, dot, drive, slsh] = pat;
-			if (exclam !== undefined) folderObj.isNegative = true;
-			if ((slsh && !dot) || drive) {
-				// we are dealing with root
-				if (!drive) {
-					const [, drv] = /([a-zA-Z]:)/.exec(process.cwd());
-					/** only for safety revert back to C */
-					/* istanbul ignore next */
-					folderObj.root = drv || 'C:';
-				} else folderObj.root = drive;
-				folderObj.cwd = folderObj.root;
-			}
-			file = file.slice(match.length);
-			fileLen = file.length;
+		let [char] = file;
+		if (char === '!') {
+			file = file.slice(1);
+			folderObj.isNegative = true;
+			[char] = file;
 		}
+		if (isAbsolute(file)) {
+			if (char === '/' || char === '\\') {
+				folderObj.root = dirRoot;
+				file = file.slice(1);
+			} else {
+				const parsed = parse(file);
+				folderObj.root = parsed.root.replace(/(\\|\/)+/, sep);
+				file = file.slice(parsed.root.length);
+			}
+			folderObj.base = folderObj.root;
+		} else if (char === '.' && (file[1] === '\\' || file[1] === '/')) {
+			file = file.slice(2);
+		}
+		fileLen = file.length;
 		deconstructFile();
 		reconstructFile();
 		return folderObj;
@@ -711,14 +704,14 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
  */
 function isUnique(obj1: FolderObject, obj2: FolderObject, isFinal?: boolean): number {
 	if (obj1.isComplex || obj2.isComplex) return 0;
-	let match = new RegExp(`([^\\${slash}]*)?(\\.[^\\${slash}]*)`).exec(obj2.startStr);
+	let match = new RegExp(`([^${escSep}]*)?(\\.[^${escSep}]*)`).exec(obj2.startStr);
 	let name = '';
 	let ext = '';
 	if (match) {
 		[, name, ext] = match;
 	}
 	/* istanbul ignore next */
-	name = name ? '' : obj2.fileName ? slash + obj2.fileName : `${slash}tst`;
+	name = name ? '' : obj2.fileName ? sep + obj2.fileName : `${sep}tst`;
 	ext = ext ? '' : obj2.ext ? obj2.ext : '.js';
 	name = name.replace(/\.\*/g, 'a');
 	ext = ext.replace(/\.\*/g, 'a');
@@ -828,6 +821,3 @@ export function getFilters(folders: string | string[], options: FilterOptions = 
 	foldersList.start = foldersList.start.filter((val, idx, self) => self.indexOf(val) === idx);
 	return foldersList;
 }
-
-const file = ['!a/b/c.js', '!a/b/**/*.js', 'a/c/**', 'a/c/b.js'];
-getFilters(file);

@@ -252,7 +252,7 @@ export function cpyFlexSync(
 		if (filters.negReg) newOptions.negReg = filters.negReg;
 		filters.positive.forEach(filt => {
 			if (filt.startStr.indexOf(filter) === 0) {
-				newOptions.root = filt.cwd;
+				newOptions.root = filt.base;
 				if (!newOptions.noRecursive) {
 					if (!filt.isComplex && !filt.anyFolder && !filt.exact) {
 						newOptions.noRecursive = true;
@@ -284,7 +284,7 @@ export async function cpyFlex(
 		if (filters.negReg) newOptions.negReg = filters.negReg;
 		filters.positive.forEach(filt => {
 			if (filt.startStr.indexOf(filter) === 0) {
-				newOptions.root = filt.cwd;
+				newOptions.root = filt.base;
 				if (!newOptions.noRecursive) {
 					if (!filt.isComplex && !filt.anyFolder && !filt.exact) {
 						newOptions.noRecursive = true;

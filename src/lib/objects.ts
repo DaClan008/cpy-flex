@@ -7,10 +7,10 @@ export interface FolderObject {
 	reg?: RegExp;
 	/** The start string before any star (sanitized) */
 	startStr?: string;
-	/** the root folder */
+	/** the root directory (if any, else \\) */
 	root?: string;
-	/** the current working directory (unsanitized) */
-	cwd?: string;
+	/** the current working directory (unsanitized) or base (including root) */
+	base?: string;
 	/** Indicate that the current string should be disallowed completely */
 	isNegative: boolean;
 	/** the full sanitized search string not (sanitized) */

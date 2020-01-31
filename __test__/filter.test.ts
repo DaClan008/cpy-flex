@@ -1,18 +1,14 @@
 import { filterBuilder, getFilters } from '../src/lib/filter';
 import { FolderObject } from '../src/lib/objects';
-const { sep, resolve } = require('path');
+const { sep, resolve, parse } = require('path');
 
-const cwd = process.cwd();
+const cwd = process.cwd() + sep;
+const drive = parse(cwd).root;
+// sanitized variables
 const cwdSanitized = cwd.replace(/(\\|\/)/g, `\\${sep}`);
 const sanSep = `\\${sep}`;
-console.log(cwd);
-const [drive] = /^[a-zA-Z]+:/.exec(cwd);
+const sanDrive = drive.replace(/(\\|\/)/g, `\\${sep}`);
 const anyEnd = `(${sanSep}.+)?$`;
-
-function sanitizer(value: string): string {
-	if (value) return value.replace(/(\\|\/)/g, `\\${sep}`);
-	return value;
-}
 
 describe('Testing FileBuilder initialization', () => {
 	test('must be able to build normal directory path when no values has been supplied', () => {
@@ -23,12 +19,13 @@ describe('Testing FileBuilder initialization', () => {
 			anyExtension: true,
 			anyFile: true,
 			isComplex: false,
+			exact: true,
 			isNegative: false,
-			cwd: cwd,
+			base: cwd,
 			startStr: cwd,
 			root: drive,
-			reg: new RegExp(cwdSanitized + anyEnd),
-			searchStr: cwdSanitized + anyEnd,
+			reg: new RegExp(cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd),
+			searchStr: cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd,
 		});
 	});
 
@@ -39,13 +36,14 @@ describe('Testing FileBuilder initialization', () => {
 			file: '',
 			isNegative: false,
 			anyExtension: true,
+			exact: true,
 			anyFile: true,
 			isComplex: false,
-			cwd: cwd,
+			base: cwd,
 			startStr: cwd,
 			root: drive,
-			reg: new RegExp(cwdSanitized + anyEnd),
-			searchStr: cwdSanitized + anyEnd,
+			reg: new RegExp(cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd),
+			searchStr: cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd,
 		});
 	});
 
@@ -55,14 +53,15 @@ describe('Testing FileBuilder initialization', () => {
 		expect(test).toEqual({
 			file: '',
 			anyExtension: true,
+			exact: true,
 			anyFile: true,
 			isComplex: false,
 			isNegative: false,
-			cwd: cwd,
+			base: cwd,
 			startStr: cwd,
 			root: drive,
-			reg: new RegExp(cwdSanitized + anyEnd),
-			searchStr: cwdSanitized + anyEnd,
+			reg: new RegExp(cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd),
+			searchStr: cwdSanitized.replace(/(\\|\/)+$/, '') + anyEnd,
 		});
 	});
 });
@@ -71,28 +70,26 @@ describe('Testing CWD parameter options', () => {
 	test('must be able to receive absolute path for cwd property', () => {
 		const folder = 'D:/cwd';
 		const test: FolderObject = filterBuilder('', { root: folder });
-		const sanFol = sanitizer(folder);
 
 		expect(test).toMatchObject({
-			cwd: `D:${sep}cwd`,
-			root: 'D:',
+			base: `D:${sep}cwd${sep}`,
+			root: `D:${sep}`,
 			file: '',
-			startStr: `D:${sep}cwd`,
-			reg: new RegExp(sanFol),
+			startStr: `D:${sep}cwd${sep}`,
+			reg: new RegExp(`D:${sanSep}cwd${sanSep}${anyEnd}`),
 		});
 	});
 
 	test('must be able to receive absolute path without root', () => {
 		const folder = '/cwd';
 		const test: FolderObject = filterBuilder('', { root: folder });
-		const sanFol = sanitizer(folder);
 
 		expect(test).toMatchObject({
-			cwd: `${drive}${sep}cwd`,
+			base: `${drive}cwd${sep}`,
 			root: drive,
 			file: '',
-			startStr: `${drive}${sep}cwd`,
-			reg: new RegExp(`${drive}${sanFol}`),
+			startStr: `${drive}cwd${sep}`,
+			reg: new RegExp(`${drive}cwd${sanSep}`),
 		});
 	});
 
@@ -101,11 +98,11 @@ describe('Testing CWD parameter options', () => {
 		const test: FolderObject = filterBuilder('', { root: folder });
 
 		expect(test).toMatchObject({
-			cwd: `${cwd}\\cwd`,
+			base: `${cwd}cwd${sep}`,
 			root: drive,
 			file: '',
-			startStr: `${cwd}${sep}cwd`,
-			reg: new RegExp(`${cwdSanitized}${sanSep}cwd`),
+			startStr: `${cwd}cwd${sep}`,
+			reg: new RegExp(`${cwdSanitized}cwd${sanSep}`),
 		});
 	});
 
@@ -114,11 +111,11 @@ describe('Testing CWD parameter options', () => {
 		const test: FolderObject = filterBuilder('', { root: folder });
 
 		expect(test).toMatchObject({
-			cwd: `${cwd}\\cwd`,
+			base: `${cwd}cwd${sep}`,
 			root: drive,
 			file: '',
-			startStr: `${cwd}${sep}cwd`,
-			reg: new RegExp(`${cwdSanitized}${sanSep}cwd`),
+			startStr: `${cwd}cwd${sep}`,
+			reg: new RegExp(`${cwdSanitized}cwd${sanSep}`),
 		});
 	});
 
@@ -127,11 +124,11 @@ describe('Testing CWD parameter options', () => {
 		const test: FolderObject = filterBuilder('', { root: folder });
 
 		expect(test).toMatchObject({
-			cwd: `D:${sep}cwd`,
-			root: 'D:',
+			base: `D:${sep}cwd${sep}`,
+			root: `D:${sep}`,
 			file: '',
-			startStr: `D:${sep}cwd`,
-			reg: new RegExp(`D:${sanSep}cwd`),
+			startStr: `D:${sep}cwd${sep}`,
+			reg: new RegExp(`D:${sanSep}cwd${anyEnd}`),
 		});
 	});
 });
@@ -143,12 +140,12 @@ describe('Testing FILE parameter for absolute Path builder', () => {
 		let test: FolderObject = filterBuilder(file, { root: cwd });
 
 		expect(test).toMatchObject({
-			cwd: cwd,
+			base: cwd,
 			root: drive,
 			file: 'some/folder/file.js',
-			startStr: `${cwd}${sep}some${sep}folder${sep}file.js`,
-			searchStr: `${cwdSanitized}${sanSep}${resultFile}`,
-			reg: new RegExp(`${cwdSanitized}${sanSep}${resultFile}`),
+			startStr: `${cwd}some${sep}folder${sep}file.js`,
+			searchStr: `${cwdSanitized}${resultFile}`,
+			reg: new RegExp(`${cwdSanitized}${resultFile}`),
 		});
 	});
 
@@ -158,12 +155,12 @@ describe('Testing FILE parameter for absolute Path builder', () => {
 		let test: FolderObject = filterBuilder(file, { root: cwd });
 
 		expect(test).toMatchObject({
-			cwd: cwd,
+			base: cwd,
 			root: drive,
 			file: './some/folder/file.js',
-			startStr: `${cwd}${sep}some${sep}folder${sep}file.js`,
-			searchStr: `${cwdSanitized}${sanSep}${resultFile}`,
-			reg: new RegExp(`${cwdSanitized}${sanSep}${resultFile}`),
+			startStr: `${cwd}some${sep}folder${sep}file.js`,
+			searchStr: `${cwdSanitized}${resultFile}`,
+			reg: new RegExp(`${cwdSanitized}${resultFile}`),
 		});
 	});
 
@@ -173,12 +170,12 @@ describe('Testing FILE parameter for absolute Path builder', () => {
 		let test: FolderObject = filterBuilder(file, { root: cwd });
 
 		expect(test).toMatchObject({
-			cwd: `${drive}`,
+			base: `${drive}`,
 			root: drive,
 			file: '/some/folder/file.js',
-			startStr: `${drive}${sep}some${sep}folder${sep}file.js`,
-			searchStr: `${drive}${sanSep}${resultFile}`,
-			reg: new RegExp(`${drive}${sanSep}${resultFile}`),
+			startStr: `${drive}some${sep}folder${sep}file.js`,
+			searchStr: `${sanDrive}${resultFile}`,
+			reg: new RegExp(`${sanDrive}${resultFile}`),
 		});
 	});
 
@@ -188,8 +185,8 @@ describe('Testing FILE parameter for absolute Path builder', () => {
 		let test: FolderObject = filterBuilder(file, { root: cwd });
 
 		expect(test).toMatchObject({
-			cwd: `D:`,
-			root: 'D:',
+			base: `D:${sep}`,
+			root: `D:${sep}`,
 			file: 'D:/some/folder/file.js',
 			startStr: `D:${sep}some${sep}folder${sep}file.js`,
 			searchStr: `D:${sanSep}${resultFile}`,
@@ -236,7 +233,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}.*${sanSep}\\*a${sanSep}b`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// \**a/b -> \*a/b
 	test('should include double star dirty end (start) -> **a/b', () => {
@@ -256,7 +253,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}[^${sanSep}]*${sanSep}\\*a${sanSep}b`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// a**b => a\*b
 	test('double middle dirty -> a**b', () => {
@@ -276,7 +273,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}b[^${sanSep}]*${sanSep}c`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// a/b* -> a/b.*
 	test('single star dirty start (end) -> a/b*', () => {
@@ -296,7 +293,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}[^${sanSep}]*a${sanSep}b`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// \**/**a/b -> .*/\*a/b
 	test('single star dirty end (end) -> a/*b', () => {
@@ -316,7 +313,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}.*${sanSep}[^${sanSep}]*a`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// \**/*a -> .*/[^\\]*a
 	test('single-single star dirty -> */*a', () => {
@@ -326,7 +323,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}[^${sanSep}]*${sanSep}[^${sanSep}]*a`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// a*b -> a[^\\]*b
 	test('single star dirty middle -> a*b', () => {
@@ -336,7 +333,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}a[^${sanSep}]*b`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 
 	// a/b** -> a/b\*
@@ -387,7 +384,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}.*${sanSep}a`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// a/**/*.js -> .*\.js
 	test('double single absolute ext -> a/**/*.js', () => {
@@ -407,7 +404,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}.*\\.[^${sanSep}]*js`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// \*.*js -> [^\\]*\.[^\\]*js
 	test('single stared ext (start - standalone) -> *.*js', () => {
@@ -417,17 +414,17 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}[^${sanSep}]*\\.[^${sanSep}]*js`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// .*js
 	test('star ext alone -> .*js', () => {
 		const file = '.*js';
 		const root = 'D:/';
 		const test: FolderObject = filterBuilder(file, { root });
-		const result = `D:${sanSep}[^${sanSep}]*js`;
+		const result = `D:${sanSep}\\.[^${sanSep}]*js`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// a/***b -> a\[]*\*b */
 	test('triple star dirty end -> a/***b', () => {
@@ -478,7 +475,7 @@ describe('STAR char', () => {
 		const result = `D:${sanSep}a\\.[^${sanSep}]*js[^${sanSep}]*`;
 
 		expect(test.searchStr).toBe(result);
-		expect(test.startStr).toBe(`D:`);
+		expect(test.startStr).toBe(`D:${sep}`);
 	});
 	// \*.*js -> [^\\]*\.[^\\]*js
 	test('double starred ext -> a.**js', () => {
@@ -1604,15 +1601,15 @@ describe('using default options in GETFILTERS', () => {
 	test('value string', () => {
 		const value = 'a/b/**/*';
 		const result = getFilters(value);
-		const sanVal = `${cwdSanitized}${sanSep}a${sanSep}b${sanSep}.*`;
-		const val = `${cwd}${sep}a${sep}b`;
+		const sanVal = `${cwdSanitized}a${sanSep}b${sanSep}.*`;
+		const val = `${cwd}a${sep}b`;
 		const reg = new RegExp(sanVal);
 		expect(result).toEqual({
 			positive: [
 				{
 					file: 'a/b/**/*',
 					isNegative: false,
-					cwd: cwd,
+					base: cwd,
 					root: drive,
 					anyFolder: true,
 					isComplex: false,
@@ -1634,8 +1631,8 @@ describe('using default options in GETFILTERS', () => {
 	test('value negative string', () => {
 		const value = '!a/b/**/*';
 		const result = getFilters(value);
-		const sanVal = `${cwdSanitized}${sanSep}a${sanSep}b${sanSep}.*`;
-		const val = `${cwd}${sep}a${sep}b`;
+		const sanVal = `${cwdSanitized}a${sanSep}b${sanSep}.*`;
+		const val = `${cwd}a${sep}b`;
 		const reg = new RegExp(sanVal);
 
 		expect(result).toEqual({
@@ -1643,7 +1640,7 @@ describe('using default options in GETFILTERS', () => {
 				{
 					file: '!a/b/**/*',
 					isNegative: true,
-					cwd: cwd,
+					base: cwd,
 					root: drive,
 					isComplex: false,
 					anyFolder: true,
@@ -1668,9 +1665,9 @@ describe('using default options in GETFILTERS', () => {
 
 		expect(result.positive.length).toBe(1);
 		expect(result.negative.length).toBe(1);
-		expect(result.posString).toBe(`${cwdSanitized}${sanSep}a${sanSep}c${sanSep}.*`);
-		expect(result.negString).toBe(`${cwdSanitized}${sanSep}a${sanSep}b${sanSep}.*\\.js`);
-		expect(result.start).toEqual([`${cwd}${sep}a${sep}c`]);
+		expect(result.posString).toBe(`${cwdSanitized}a${sanSep}c${sanSep}.*`);
+		expect(result.negString).toBe(`${cwdSanitized}a${sanSep}b${sanSep}.*\\.js`);
+		expect(result.start).toEqual([`${cwd}a${sep}c`]);
 	});
 
 	test('multiple values [], but in reverse order from before', () => {
@@ -1679,9 +1676,9 @@ describe('using default options in GETFILTERS', () => {
 
 		expect(result.positive.length).toBe(1);
 		expect(result.negative.length).toBe(1);
-		expect(result.posString).toBe(`${cwdSanitized}${sanSep}a${sanSep}c${sanSep}.*`);
-		expect(result.negString).toBe(`${cwdSanitized}${sanSep}a${sanSep}b${sanSep}.*\\.js`);
-		expect(result.start).toEqual([`${cwd}${sep}a${sep}c`]);
+		expect(result.posString).toBe(`${cwdSanitized}a${sanSep}c${sanSep}.*`);
+		expect(result.negString).toBe(`${cwdSanitized}a${sanSep}b${sanSep}.*\\.js`);
+		expect(result.start).toEqual([`${cwd}a${sep}c`]);
 	});
 
 	test('multiple values [], but ignore complex types', () => {
@@ -1690,9 +1687,9 @@ describe('using default options in GETFILTERS', () => {
 
 		expect(result.positive.length).toBe(2);
 		expect(result.posString).toBe(
-			`${cwdSanitized}${sanSep}a${sanSep}.*|${cwdSanitized}${sanSep}a${sanSep}.*${sanSep}a\\.js`,
+			`${cwdSanitized}a${sanSep}.*|${cwdSanitized}a${sanSep}.*${sanSep}a\\.js`,
 		);
-		expect(result.start).toEqual([`${cwd}${sep}a`]);
+		expect(result.start).toEqual([`${cwd}a`]);
 	});
 	test('multiple Different Values []', () => {
 		const value = ['!a/b', '!a/c', 'a/d', 'a/e'];
@@ -1701,12 +1698,12 @@ describe('using default options in GETFILTERS', () => {
 		expect(result.positive.length).toBe(2);
 		expect(result.negative.length).toBe(2);
 		expect(result.posString).toBe(
-			`${cwdSanitized}${sanSep}a${sanSep}d${anyEnd}|${cwdSanitized}${sanSep}a${sanSep}e${anyEnd}`,
+			`${cwdSanitized}a${sanSep}d${anyEnd}|${cwdSanitized}a${sanSep}e${anyEnd}`,
 		);
 		expect(result.negString).toBe(
-			`${cwdSanitized}${sanSep}a${sanSep}b${anyEnd}|${cwdSanitized}${sanSep}a${sanSep}c${anyEnd}`,
+			`${cwdSanitized}a${sanSep}b${anyEnd}|${cwdSanitized}a${sanSep}c${anyEnd}`,
 		);
-		expect(result.start).toEqual([`${cwd}${sep}a${sep}d`, `${cwd}${sep}a${sep}e`]);
+		expect(result.start).toEqual([`${cwd}a${sep}d`, `${cwd}a${sep}e`]);
 	});
 	test('multiple same negative and positive', () => {
 		const value = ['!a/b/**', 'a/b/c'];
@@ -1733,10 +1730,8 @@ describe('using options in GETFILTERS', () => {
 		const result = getFilters(file, { unique });
 
 		expect(result.positive.length).toBe(2);
-		expect(result.posString).toBe(
-			`${cwdSanitized}${sanSep}a${sanSep}.*|${cwdSanitized}${sanSep}a${sanSep}.*`,
-		);
-		expect(result.start).toEqual([`${cwd}${sep}a`]);
+		expect(result.posString).toBe(`${cwdSanitized}a${sanSep}.*|${cwdSanitized}a${sanSep}.*`);
+		expect(result.start).toEqual([`${cwd}a`]);
 	});
 	test('all options', () => {
 		const file = ['a/**', 'a/**'];

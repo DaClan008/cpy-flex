@@ -1,40 +1,21 @@
 import { readdir, readdirSync, Dirent, existsSync } from 'fs';
-import { join, sep, resolve } from 'path';
+import { join, sep, resolve, isAbsolute } from 'path';
 import { FolderBuilderOptions, FolderInfo, ErrorOptions } from './objects';
 import { errorHandler } from './errorHandler';
 
-export function fixFiles(files: string[], root: string, noFix = false): string[] {
+export function fixFiles(files: string[], root = '.', noFix = false): string[] {
 	const newArr: string[] = [];
-	const test = /^([a-zA-Z]:)/.exec(root);
-	let rootDir = '';
-	if (test) [, rootDir] = test;
 
 	files.forEach(file => {
 		if (!file) return;
-		let wrkFile = file.replace(/(\\+|\/+)/g, sep);
-		if (wrkFile.charAt(wrkFile.length - 1) === sep) wrkFile = wrkFile.slice(0, -1);
+		let wrkFile = file.replace(/(\\|\/)+/g, sep);
+		if (wrkFile.charAt(0) === '!') wrkFile = wrkFile.slice(1);
 		if (!noFix) {
-			let indx = 0;
-			let char = wrkFile.charAt(indx);
-			let relative = false;
-			if (char === '!') char = wrkFile.charAt(++indx);
-			if (char === '.') {
-				relative = true;
-				char = wrkFile.charAt(++indx);
-			}
-			if ((char === sep && !relative) || wrkFile.charAt(indx + 1) === ':') {
-				// we have absolute path
-				// if (indx >= 0) wrkFile = wrkFile.slice(char === path.sep ? indx + 1 : indx);
-				if (indx > 0) wrkFile = wrkFile.slice(indx);
-				if (char === sep) newArr.push(`${rootDir}${wrkFile}`);
-				else newArr.push(wrkFile);
-			} else {
-				// we have relative path
-				if (char !== sep) indx--;
-				if (indx >= 0) wrkFile = wrkFile.slice(indx + 1);
-				newArr.push(`${root}${wrkFile ? sep : ''}${wrkFile}`);
-			}
-		} else newArr.push(wrkFile);
+			const rootDir = resolve(root);
+			if (!isAbsolute(wrkFile)) wrkFile = join(rootDir, wrkFile);
+			else wrkFile = resolve(wrkFile);
+		}
+		newArr.push(wrkFile);
 	});
 	return newArr;
 }
@@ -205,7 +186,6 @@ export async function getFolders(
 	const rLen = rootLen || (root.indexOf(strt) ? root.length : 2);
 	const sLen = startLen || strt.length;
 	let folderInfo: Dirent[] = [];
-
 	// get folders
 	try {
 		folderInfo = await new Promise((res, rej) => {
