@@ -121,6 +121,10 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 		if (tmpStr) {
 			// FIXME here
 			if (!hasPattern) {
+				if (folderStrArr.length === 0 && !folderObj.root) {
+					folderObj.root = dirRoot;
+					folderObj.base = dir;
+				}
 				folderStrArr.push(tmpNorm);
 				if (done) {
 					if (tmpNorm) {
@@ -509,6 +513,10 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 						break;
 					}
 					// slash will be the reset point
+					if (i === 0) {
+						folderObj.root = dirRoot;
+						folderObj.base = dirRoot;
+					}
 					slashCnt++;
 					break;
 				case '[':
@@ -603,7 +611,10 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 					cnt = 1;
 					while (i + cnt < fileLen && file[i + cnt] === '.') cnt++;
 					i += cnt - 1;
-
+					if (i === 0 && (file[i + 1] === '\\' || file[i + 1] === '/')) {
+						while (file[i + 1] === '\\' || file[i + 1] === '/') i++;
+						continue;
+					}
 					if (cnt === 2 && patternState === bracketStates.none) {
 						// remove a folder or regex .
 						if (
@@ -618,15 +629,27 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 							if (pattern.length < folderStrArr.length) folderStrArr.pop();
 						} else if (folderObj.base) {
 							// remove from cwd
-							const cwdArr = folderObj.base.split(sep);
+							const baseArr = folderObj.base.split(sep);
 							// remove empty
-							if (cwdArr[cwdArr.length - 1] === '') cwdArr.pop();
+							if (baseArr[baseArr.length - 1] === '') baseArr.pop();
 							// don't remove root
-							if (cwdArr.pop() + sep !== folderObj.root) {
-								folderObj.base = cwdArr.join(sep) + sep;
+							if (baseArr.pop() + sep !== folderObj.root) {
+								folderObj.base = baseArr.join(sep) + sep;
 							}
 						}
 					} else for (let x = 0; x < cnt; x++) addChar('.', true);
+					break;
+				case ':':
+					if (
+						folderStrArr.length === 0 &&
+						(file[i + 1] === '\\' || file[i + 1] === '/')
+					) {
+						while (file[i + 1] === '/' || file[i + 1] === '\\') i++;
+						folderObj.root = `${tmpNorm}:${sep}`;
+						tmpNorm = '';
+						tmpStr = '';
+						folderObj.base = folderObj.root;
+					}
 					break;
 				default:
 					addChar(file[i]);
@@ -640,8 +663,6 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 	//* Rebuild methods
 	// #region rebuild file
 	function reconstructFile(): void {
-		/* istanbul ignore next */
-		if (folderObj.root && !folderObj.base) folderObj.base = folderObj.root;
 		// work through pattern
 		const sanCwd = folderObj.base.replace(new RegExp(`${escSep}`, 'g'), `${escSep}`);
 		if (folderStrArr.length > 0) {
@@ -678,19 +699,6 @@ export const filterBuilder = (startFile = '', options: FilterOptions = {}): Fold
 			file = file.slice(1);
 			folderObj.isNegative = true;
 			[char] = file;
-		}
-		if (isAbsolute(file)) {
-			if (char === '/' || char === '\\') {
-				folderObj.root = dirRoot;
-				file = file.slice(1);
-			} else {
-				const parsed = parse(file);
-				folderObj.root = parsed.root.replace(/(\\|\/)+/, sep);
-				file = file.slice(parsed.root.length);
-			}
-			folderObj.base = folderObj.root;
-		} else if (char === '.' && (file[1] === '\\' || file[1] === '/')) {
-			file = file.slice(2);
 		}
 		fileLen = file.length;
 		deconstructFile();
@@ -825,3 +833,5 @@ export function getFilters(folders: string | string[], options: FilterOptions = 
 	foldersList.start = foldersList.start.filter((val, idx, self) => self.indexOf(val) === idx);
 	return foldersList;
 }
+
+console.log(filterBuilder('/some foloder*', { root: 'D:' }));

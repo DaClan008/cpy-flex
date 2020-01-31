@@ -16,3 +16,5 @@ console.log(sep);
 const pat = new RegExp(`[^\\${sep}]`);
 console.log(pat.test('C:\\abc\\def'));
 console.log('abc'.charAt(-1));
+
+console.log(resolve('/'));
