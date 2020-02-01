@@ -43,7 +43,7 @@ if (args.length > 0) {
                 break;
             case 'mes':
             case 'message':
-                message = args[i + 1];
+                message = `-m "${args[i + 1]}"`;
                 i++
                 break;
             case 'ignorepack':
