@@ -1,6 +1,6 @@
 {
     "name": "cpy-flex",
-    "version": "0.0.3",
+    "version": "0.3.23",
     "description": "A flexible copy module",
     "main": "index.js",
     "scripts": {
@@ -17,7 +17,8 @@
         "pregit": "git add -A",
         "git": "git commit -m \"auto git commit\"",
         "postgit": "git push",
-        "pub": "node ./tools/publish"
+        "pub": "node ./tools/publish",
+        "testpack": "node tools/publish"
     },
     "engines": {
         "node": ">=10.10.0"
