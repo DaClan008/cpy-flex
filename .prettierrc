@@ -19,6 +19,15 @@
                 "trailingComma": "none",
                 "printWidth": 10000
             }
+        },
+        {
+            "files": [
+                "**/cli/cpyFlex.ts",
+                "**/cli/cpyFlex.js"
+            ],
+            "options": {
+                "endOfLine": "lf"
+            }
         }
     ]
 }

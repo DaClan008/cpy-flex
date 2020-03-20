@@ -1,3 +1,5 @@
 __test__/**/*.ts
 node_modules/*
 **/*.json
+src/cli/cpyFlex.ts
+bin/cli/cpyFlex.js
